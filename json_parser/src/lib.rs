@@ -15,16 +15,19 @@ fn tokenize(raw: &str) -> Vec<String> {
     for value in raw.chars() {
         if value == '{' || value == '[' {
             tokens.push(value.to_string());
-        } else if value == '}' || value == ']' || value == ':' {
-            if buffer.len() > 0 {
-                tokens.push(buffer.clone());
-            }
-            buffer.clear();
+        } else if value == '}' || value == ']' {
+            tokens.push(buffer.clone());
+            buffer = value.to_string();
+        } else if value == ':' || value == ',' {
+            tokens.push(buffer.clone());
             tokens.push(value.to_string());
+            buffer.clear();
         } else {
             buffer.push(value);
         }
     }
+    let last_char = raw.chars().nth(raw.len() - 1).unwrap();
+    tokens.push(last_char.to_string());
     return tokens;
 }
 
@@ -44,17 +47,30 @@ mod tests {
     }
 
     #[test]
+    fn test_tokenize_with_comma() {
+        let input = r#"{"a":1,"b":2}"#;
+        let tokens = tokenize(input);
+        assert_eq!(
+            tokens,
+            vec!["{", "\"a\"", ":", "1", ",", "\"b\"", ":", "2", "}"]
+        );
+    }
+
+    #[test]
     fn test_tokenize_array() {
         let input = "[1,2,3]";
         let tokens = tokenize(input);
-        assert_eq!(tokens, vec!["[", "1,2,3", "]"]);
+        assert_eq!(tokens, vec!["[", "1", ",", "2", ",", "3", "]"]);
     }
 
     #[test]
     fn test_tokenize_nested() {
         let input = r#"{"arr":[1,2]}"#;
         let tokens = tokenize(input);
-        assert_eq!(tokens, vec!["{", "\"arr\"", ":", "[", "1,2", "]", "}"]);
+        assert_eq!(
+            tokens,
+            vec!["{", "\"arr\"", ":", "[", "1", ",", "2", "]", "}"]
+        );
     }
 
     #[test]
