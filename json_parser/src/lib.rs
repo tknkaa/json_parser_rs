@@ -1,4 +1,4 @@
-use std::{collections::HashMap, thread::current};
+use std::{collections::HashMap};
 
 #[derive(Debug, PartialEq)]
 enum Value {
@@ -167,7 +167,6 @@ mod tests {
         );
         obj.insert(String::from("\"age\""), Value::String(String::from("43")));
         let answer: Value = Value::Object(obj);
-        let tokens = tokenize(data);
         assert_eq!(v, answer);
     }
 
