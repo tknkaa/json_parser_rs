@@ -1,4 +1,5 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
+use std::fmt;
 use std::ops::Index;
 
 #[derive(Debug, PartialEq)]
@@ -13,7 +14,7 @@ impl Index<&str> for Value {
     fn index(&self, key: &str) -> &Self::Output {
         match self {
             Value::Object(map) => map.get(key).expect("no such key in object"),
-            _ => panic!("cannot index with &str into non-object")
+            _ => panic!("cannot index with &str into non-object"),
         }
     }
 }
@@ -23,8 +24,17 @@ impl Index<usize> for Value {
     fn index(&self, index: usize) -> &Self::Output {
         match self {
             Value::Array(vec) => vec.get(index).expect("index out of bounds"),
-            _ => panic!("cannot index with usize into non-array")
-        } 
+            _ => panic!("cannot index with usize into non-array"),
+        }
+    }
+}
+
+impl fmt::Display for Value {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Value::String(s) => write!(f, "{s}"),
+            _ => panic!("cannot print object and array"),
+        }
     }
 }
 
