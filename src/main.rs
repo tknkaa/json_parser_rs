@@ -8,5 +8,5 @@ fn main() {
 
     let json = json_parser::parse(data);
     println!("{:?}", json);
-    println!("{}", json["\"name\""]);
+    println!("{}", json["name"]);
 }

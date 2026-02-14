@@ -100,7 +100,13 @@ fn parse_object(tokens: &Vec<String>, cursor: &mut usize) -> Value {
                         *cursor += 1;
                     }
                     let value = parse_value(tokens, cursor);
-                    obj.insert(key.to_string(), value);
+                    // Strip quotes from key if present
+                    let key_stripped = if key.starts_with('"') && key.ends_with('"') {
+                        &key[1..key.len() - 1]
+                    } else {
+                        key
+                    };
+                    obj.insert(key_stripped.to_string(), value);
                     match tokens.get(*cursor) {
                         Some(v) => {
                             if v == "," {
@@ -192,10 +198,10 @@ mod tests {
 
         let mut obj = HashMap::new();
         obj.insert(
-            String::from("\"name\""),
+            String::from("name"),
             Value::String(String::from("\"John Doe\"")),
         );
-        obj.insert(String::from("\"age\""), Value::String(String::from("43")));
+        obj.insert(String::from("age"), Value::String(String::from("43")));
         let answer: Value = Value::Object(obj);
         assert_eq!(v, answer);
     }
@@ -246,10 +252,10 @@ mod tests {
         let v = parse(data);
 
         let mut obj1 = HashMap::new();
-        obj1.insert(String::from("\"a\""), Value::String(String::from("1")));
+        obj1.insert(String::from("a"), Value::String(String::from("1")));
 
         let mut obj2 = HashMap::new();
-        obj2.insert(String::from("\"b\""), Value::String(String::from("2")));
+        obj2.insert(String::from("b"), Value::String(String::from("2")));
 
         let expected = Value::Array(vec![Value::Object(obj1), Value::Object(obj2)]);
         assert_eq!(v, expected);
@@ -262,7 +268,7 @@ mod tests {
 
         let mut obj = HashMap::new();
         obj.insert(
-            String::from("\"numbers\""),
+            String::from("numbers"),
             Value::Array(vec![
                 Value::String(String::from("1")),
                 Value::String(String::from("2")),
