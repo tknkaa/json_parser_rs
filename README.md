@@ -10,10 +10,10 @@ fn main() {
 
     let json = json_parser::parse(data);
     println!("{:?}", json);
-    println!("{}", json["\"name\""]);
+    println!("{}", json["name"]);
 }
 ```
 ```sh
-Object({"\"age\"": String("43"), "\"name\"": String("\"John Doe\"")})
+Object({"\"age\"": String("43"), "name": String("\"John Doe\"")})
 "John Doe"
 ```
